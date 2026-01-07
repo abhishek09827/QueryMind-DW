@@ -234,8 +234,3 @@ ORDER BY fr.review_score DESC;
 - Date dimension covers 2016-2020 (full 5-year period)
 - Customer dimension uses SCD Type 2 for historical tracking
 - All fact tables include surrogate keys and foreign key relationships
-
-## License
-
-This project follows the same license as the reference repository.
-
