@@ -234,3 +234,49 @@ ORDER BY fr.review_score DESC;
 - Date dimension covers 2016-2020 (full 5-year period)
 - Customer dimension uses SCD Type 2 for historical tracking
 - All fact tables include surrogate keys and foreign key relationships
+
+---
+
+# Modern Data Platform Extension
+
+This project has been extended with a production-grade data platform architecture.
+
+## Architecture Diagram
+
+```mermaid
+graph LR
+    CSV[CSV Source] -->|Producer| Kafka[Kafka]
+    Kafka -->|Consumer| MinIO[MinIO Data Lake]
+    MinIO -->|Loader| Postgres[Postgres Warehouse]
+    Postgres -->|dbt| Silver[dbt Silver]
+    Silver -->|dbt| Gold[dbt Gold]
+```
+
+## Extended Tech Stack
+- **Kafka**: Ingestion buffer for simulated real-time/batch data.
+- **MinIO**: Object storage (S3 compatible) for Raw/Staging layer.
+- **Airflow**: Orchestrator for the end-to-end pipeline.
+- **dbt**: Transformation engine for Silver/Gold layers.
+
+## Why dbt?
+dbt is introduced *after* the initial load (Bronze) to manage the complex transformations (Silver/Gold) because:
+1. **Testing**: Automated tests (`unique`, `not_null`) ensure data quality in the Gold layer.
+2. **Lineage**: Auto-generated documentation and dependency graphs.
+3. **Modularity**: Reusable models for Dimensions and Facts.
+
+## Execution Steps
+
+1. **Start Infrastructure**:
+   ```bash
+   docker-compose up -d
+   ```
+
+2. **Trigger Pipeline (via Airflow)**:
+   - Access Airflow at `http://localhost:8080` (admin/admin).
+   - Trigger `olist_etl_pipeline`.
+
+3. **Pipeline Stages**:
+   - **Ingestion**: Reads CSVs from `datasets/` -> Kafka -> MinIO `raw/`.
+   - **Loading**: Loads JSON from MinIO -> Postgres `bronze` tables (executes DDL first).
+   - **Transformation**: Runs `dbt run` to populate `silver` and `gold` tables.
+   - **Testing**: Runs `dbt test` to verify Gold models.

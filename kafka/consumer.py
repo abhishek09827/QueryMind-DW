@@ -7,11 +7,11 @@ from kafka import KafkaConsumer
 
 # Add project root to path to import minio.utils
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from minio.utils import MinioClient
+from data_utils.utils import MinioClient
 
 # Configuration
-KAFKA_BOOTSTRAP_SERVERS = ['localhost:9092']
-TOPICS = ['orders', 'customers', 'payments']
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092').split(',')
+TOPICS = ['orders', 'customers', 'payments', 'items', 'products', 'sellers', 'reviews', 'geolocation']
 GROUP_ID = 'data-lake-loader'
 BATCH_SIZE = 100  # Number of records to buffer before writing to MinIO
 BATCH_TIMEOUT_SEC = 10

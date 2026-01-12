@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: warehouse
+    schema: bronze
+    tables:
+      - name: orders
+      - name: customers
+      - name: order_items
+      - name: products
+      - name: sellers
+      - name: order_payments
+      - name: order_reviews
+      - name: geolocation

@@ -7,12 +7,21 @@ from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
 # Configuration
-KAFKA_BOOTSTRAP_SERVERS = ['localhost:9092']
-DATASETS_DIR = '../datasets'
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092').split(',')
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092').split(',')
+DATASETS_DIR = os.getenv('DATASETS_DIR', '/opt/airflow/datasets')
+if not os.path.exists(DATASETS_DIR):
+    # Fallback for local testing if not in Docker
+    DATASETS_DIR = os.path.join(os.path.dirname(__file__), '../datasets')
 TOPICS = {
     'orders': 'olist_orders_dataset.csv',
     'customers': 'olist_customers_dataset.csv',
-    'payments': 'olist_order_payments_dataset.csv'
+    'payments': 'olist_order_payments_dataset.csv',
+    'items': 'olist_order_items_dataset.csv',
+    'products': 'olist_products_dataset.csv',
+    'sellers': 'olist_sellers_dataset.csv',
+    'reviews': 'olist_order_reviews_dataset.csv',
+    'geolocation': 'olist_geolocation_dataset.csv'
 }
 
 def create_topics(admin_client, topic_names):

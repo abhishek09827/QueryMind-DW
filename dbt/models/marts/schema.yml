@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: dim_customers
+    columns:
+      - name: customer_sk
+        tests:
+          - unique
+          - not_null
+
+  - name: fact_orders
+    columns:
+      - name: order_sk
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_sk
+
+  - name: dim_product
+    columns:
+      - name: product_sk
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_seller
+    columns:
+      - name: seller_sk
+        tests:
+          - unique
+          - not_null
+
+  - name: fact_order_items
+    columns:
+      - name: order_item_sk
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - not_null
+      - name: product_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: product_sk
+
+  - name: fact_payments
+    columns:
+      - name: payment_sk
+        tests:
+          - unique
+          - not_null
+      - name: order_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_orders')
+              field: order_sk
+
+  - name: fact_reviews
+    columns:
+      - name: review_sk
+        tests:
+          - unique
+          - not_null
+      - name: order_sk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_orders')
+              field: order_sk

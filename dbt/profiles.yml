@@ -1,0 +1,12 @@
+olist_warehouse:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      threads: 4
+      host: postgres
+      port: 5432
+      user: warehouse_user
+      pass: warehouse_pass
+      dbname: warehouse
+      schema: public
