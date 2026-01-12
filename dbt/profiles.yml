@@ -1,4 +1,4 @@
-olist_warehouse:
+data_warehouse:
   target: dev
   outputs:
     dev:

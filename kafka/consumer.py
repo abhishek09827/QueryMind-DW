@@ -11,7 +11,17 @@ from data_utils.utils import MinioClient
 
 # Configuration
 KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092').split(',')
-TOPICS = ['orders', 'customers', 'payments', 'items', 'products', 'sellers', 'reviews', 'geolocation']
+
+# Load Config
+CONF_PATH = os.getenv('CONFIG_PATH', '/opt/airflow/config/project_config.json')
+if not os.path.exists(CONF_PATH):
+    # Fallback for local
+    CONF_PATH = os.path.join(os.path.dirname(__file__), '../config/project_config.json')
+
+with open(CONF_PATH, 'r') as f:
+    config = json.load(f)
+
+TOPICS = [source["name"] for source in config["sources"]]
 GROUP_ID = 'data-lake-loader'
 BATCH_SIZE = 100  # Number of records to buffer before writing to MinIO
 BATCH_TIMEOUT_SEC = 10

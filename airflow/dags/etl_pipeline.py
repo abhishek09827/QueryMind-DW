@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.bash import BashOperator
-from airflow.operators.python import PythonOperator
 import sys
-import os
 
 # Add project root to sys path so we can import modules if needed
 sys.path.append('/opt/airflow')
@@ -19,9 +17,9 @@ default_args = {
 }
 
 dag = DAG(
-    'olist_etl_pipeline',
+    'generic_data_pipeline',
     default_args=default_args,
-    description='End-to-End Olist Pipeline: Kafka -> MinIO -> Postgres -> dbt',
+    description='End-to-End Data Pipeline: Kafka -> MinIO -> Postgres -> dbt',
     schedule_interval=timedelta(days=1),
     catchup=False
 )

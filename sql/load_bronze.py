@@ -19,16 +19,17 @@ POSTGRES_CONF = {
     "password": "warehouse_pass"
 }
 
-TABLE_MAPPING = {
-    "orders": "bronze.orders",
-    "customers": "bronze.customers",
-    "payments": "bronze.order_payments",
-    "items": "bronze.order_items",
-    "products": "bronze.products",
-    "sellers": "bronze.sellers",
-    "reviews": "bronze.order_reviews",
-    "geolocation": "bronze.geolocation"
-}
+# Load Config
+CONF_PATH = os.getenv('CONFIG_PATH', '/opt/airflow/config/project_config.json')
+if not os.path.exists(CONF_PATH):
+    # Fallback for local
+    CONF_PATH = os.path.join(os.path.dirname(__file__), '../config/project_config.json')
+
+with open(CONF_PATH, 'r') as f:
+    config = json.load(f)
+
+# Map bucket prefix (source name) -> table name
+TABLE_MAPPING = { source["name"]: source["table"] for source in config["sources"] }
 
 def get_db_connection():
     return psycopg2.connect(**POSTGRES_CONF)

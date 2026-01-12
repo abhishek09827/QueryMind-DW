@@ -1,8 +1,8 @@
-name: 'olist_warehouse'
+name: 'data_warehouse'
 version: '1.0.0'
 config-version: 2
 
-profile: 'olist_warehouse'
+profile: 'data_warehouse'
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]
@@ -17,7 +17,7 @@ clean-targets:         # directories to be removed by 'dbt clean'
   - "dbt_packages"
 
 models:
-  olist_warehouse:
+  data_warehouse:
     # Config for all models
     materialized: view  # Default
     staging:

@@ -21,6 +21,7 @@ x-airflow-common: &airflow-common
     - ./kafka:/opt/airflow/kafka
     - ./data_utils:/opt/airflow/data_utils
     - ./datasets:/opt/airflow/datasets
+    - ./config:/opt/airflow/config
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     - postgres
