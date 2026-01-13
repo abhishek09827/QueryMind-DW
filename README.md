@@ -280,3 +280,92 @@ dbt is introduced *after* the initial load (Bronze) to manage the complex transf
    - **Loading**: Loads JSON from MinIO -> Postgres `bronze` tables (executes DDL first).
    - **Transformation**: Runs `dbt run` to populate `silver` and `gold` tables.
    - **Testing**: Runs `dbt test` to verify Gold models.
+
+---
+
+# 🧠 QueryMind: LLM Analytics Layer
+
+An AI-powered natural language interface for querying the data warehouse.
+
+## Architecture
+
+User Question (Natural Language)
+   ↓
+Streamlit Interface (`app/streamlit_app.py`)
+   ↓
+Schema Loader (`llm/schema_loader.py`) ← Reads dbt artifacts (`dbt/target/manifest.json`)
+   ↓
+Prompt Engine (`llm/prompt_templates.py`) ← Injects Gold Schema Context
+   ↓
+SQL Generator (`llm/sql_generator.py`) ← OpenAI GPT-3.5/4
+   ↓
+SQL Validator (`llm/sql_validator.py`) ← Enforces READ-ONLY & Gold Schema
+   ↓
+Executor (`llm/executor.py`) → Postgres Database (Gold Layer)
+   ↓
+Explainer (`llm/explainer.py`) → Natural Language Summary
+   ↓
+User Result
+
+## Features
+- **Zero-Config Schema Awareness**: Automatically builds prompts from dbt metadata.
+- **Strictly Read-Only**: Validator blocks `INSERT`, `UPDATE`, `DROP`, etc.
+- **Gold-Layer Only**: Restricts queries to the analytical schema.
+- **Explainable AI**: Returns the raw SQL alongside the result and an explanation.
+
+## Setup & Usage
+
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Configure Environment**:
+   Ensure your `.env` file or environment variables contain:
+   ```env
+   OPENAI_API_KEY=sk-...
+   POSTGRES_HOST=localhost
+   POSTGRES_USER=warehouse_user
+   POSTGRES_PASSWORD=warehouse_pass
+   ```
+
+3. **Run the App**:
+   ```bash
+   streamlit run app/streamlit_app.py
+   ```
+
+4. **Example Questions**:
+   - "What is the total revenue by month?"
+   - "List the top 5 states by number of orders."
+   - "What is the average delivery time per seller?"
+
+
+---
+
+#  Dashboard Layer (Streamlit)
+
+A modular, production-grade dashboard system has been added to visualize insights from the Gold layer.
+
+## Features
+
+1.  **Executive Overview**: High-level KPIs (Revenue, Orders, AOV, Active Customers) and trends.
+2.  **Sales & Order Analysis**: Daily sales trends, top products, and detailed order lists with filtering.
+3.  **Customer Analytics**: Segmentation (VIP vs. One-time), retention metrics, and geographic distribution.
+4.  **Delivery & Operations**: Analysis of delivery times, delays, and seller performance.
+5.  **QueryMind AI**: The LLM-powered natural language analyst is now integrated as a dashboard page.
+
+## Running the Dashboard
+
+To launch the full dashboard suite:
+
+\\\ash
+streamlit run dashboards/app.py
+\\\
+
+## Structure
+
+- \dashboards/app.py\: Main entry point and navigation.
+- \dashboards/pages/\: Individual dashboard modules.
+- \dashboards/components/\: Reusable UI components (KPI cards, charts, filters).
+- \db/connection.py\: Centralized, cached database connection logic using SQLAlchemy.
+
