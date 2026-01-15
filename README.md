@@ -1,371 +1,210 @@
-# SQL Data Warehouse Project - Olist Brazilian E-Commerce Dataset
+# 🚀 QueryMind: Data Warehouse & AI Analytics Platform
 
-This project implements a Medallion architecture (Bronze, Silver, Gold layers) for the Olist Brazilian E-Commerce dataset using SQL.
+[![Olist E-Commerce](https://img.shields.io/badge/Dataset-Olist%20E--Commerce-blue.svg)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+[![Architecture](https://img.shields.io/badge/Architecture-Medallion-orange.svg)](https://www.databricks.com/glossary/medallion)
+[![Stack](https://img.shields.io/badge/Stack-Postgres%20%7C%20dbt%20%7C%20Airflow%20%7C%20Kafka%20%7C%20MinIO-green.svg)]()
 
-## Project Structure
-
-```
-DataWarehouse/
-├── scripts/
-│   ├── bronze/
-│   │   ├── 01_create_bronze_schema.sql
-│   │   ├── 02_create_bronze_tables.sql
-│   │   ├── 03_load_bronze_orders.sql
-│   │   ├── 04_load_bronze_customers.sql
-│   │   ├── 05_load_bronze_order_items.sql
-│   │   ├── 06_load_bronze_products.sql
-│   │   ├── 07_load_bronze_payments.sql
-│   │   ├── 08_load_bronze_reviews.sql
-│   │   ├── 09_load_bronze_sellers.sql
-│   │   └── 10_load_bronze_geolocation.sql
-│   ├── silver/
-│   │   ├── 01_create_silver_schema.sql
-│   │   ├── 02_silver_customers_clean.sql
-│   │   ├── 03_silver_orders_clean.sql
-│   │   ├── 04_silver_order_items_clean.sql
-│   │   ├── 05_silver_products_clean.sql
-│   │   ├── 06_silver_payments_clean.sql
-│   │   ├── 07_silver_reviews_clean.sql
-│   │   ├── 08_silver_sellers_clean.sql
-│   │   └── 09_silver_geolocation_clean.sql
-│   └── gold/
-│       ├── 01_create_gold_schema.sql
-│       ├── 02_dim_customer.sql
-│       ├── 03_dim_product.sql
-│       ├── 04_dim_seller.sql
-│       ├── 05_dim_date.sql
-│       ├── 06_fact_orders.sql
-│       ├── 07_fact_order_items.sql
-│       ├── 08_fact_payments.sql
-│       └── 09_fact_reviews.sql
-└── tests/
-    ├── test_row_counts.sql
-    ├── test_nulls.sql
-    └── test_fk_integrity.sql
-```
-
-## Architecture Overview
-
-### Bronze Layer
-- **Purpose**: Raw, unprocessed data from CSV files
-- **Tables**: Exact copies of source CSV structure
-- **No transformations**: Data loaded as-is
-
-### Silver Layer
-- **Purpose**: Cleaned, deduplicated, standardized data
-- **Transformations Applied**:
-  - Trim whitespace
-  - Lowercase/uppercase standardization
-  - Convert timestamps to proper types
-  - Remove duplicates
-  - Replace empty strings with NULL
-  - Validate numeric columns
-  - Date logic validation
-
-### Gold Layer
-- **Purpose**: Dimensional model (Star Schema) for analytics
-- **Dimensions**:
-  - `dim_customer` (SCD Type 2)
-  - `dim_product`
-  - `dim_seller`
-  - `dim_date` (5-year calendar: 2016-2020)
-- **Fact Tables**:
-  - `fact_orders` (order metrics, delivery times)
-  - `fact_order_items` (item-level metrics)
-  - `fact_payments` (payment transactions)
-  - `fact_reviews` (customer reviews)
-
-## Execution Order
-
-### 1. Bronze Layer
-```sql
--- Execute in order:
-\i scripts/bronze/01_create_bronze_schema.sql
-\i scripts/bronze/02_create_bronze_tables.sql
-\i scripts/bronze/03_load_bronze_orders.sql
-\i scripts/bronze/04_load_bronze_customers.sql
-\i scripts/bronze/05_load_bronze_order_items.sql
-\i scripts/bronze/06_load_bronze_products.sql
-\i scripts/bronze/07_load_bronze_payments.sql
-\i scripts/bronze/08_load_bronze_reviews.sql
-\i scripts/bronze/09_load_bronze_sellers.sql
-\i scripts/bronze/10_load_bronze_geolocation.sql
-```
-
-
-### 2. Silver Layer
-```sql
--- Execute in order:
-\i scripts/silver/01_create_silver_schema.sql
-\i scripts/silver/02_silver_customers_clean.sql
-\i scripts/silver/03_silver_orders_clean.sql
-\i scripts/silver/04_silver_order_items_clean.sql
-\i scripts/silver/05_silver_products_clean.sql
-\i scripts/silver/06_silver_payments_clean.sql
-\i scripts/silver/07_silver_reviews_clean.sql
-\i scripts/silver/08_silver_sellers_clean.sql
-\i scripts/silver/09_silver_geolocation_clean.sql
-```
-
-### 3. Gold Layer
-```sql
--- Execute in order:
-\i scripts/gold/01_create_gold_schema.sql
-\i scripts/gold/05_dim_date.sql  -- Create date dimension first (used by facts)
-\i scripts/gold/02_dim_customer.sql
-\i scripts/gold/03_dim_product.sql
-\i scripts/gold/04_dim_seller.sql
-\i scripts/gold/06_fact_orders.sql
-\i scripts/gold/07_fact_order_items.sql
-\i scripts/gold/08_fact_payments.sql
-\i scripts/gold/09_fact_reviews.sql
-```
-
-### 4. Run Tests
-```sql
--- Execute tests:
-\i tests/test_row_counts.sql
-\i tests/test_nulls.sql
-\i tests/test_fk_integrity.sql
-```
-
-## Database Compatibility
-
-The SQL scripts are designed to work with:
-- **PostgreSQL** (primary target)
-- **DuckDB** (with minor syntax adjustments)
-
-### PostgreSQL Notes
-- Uses `SERIAL` for auto-incrementing keys
-- Uses `COPY` command for CSV loading
-- Uses `EXTRACT()` and `DATE_TRUNC()` for date functions
-
-### DuckDB Notes
-- Replace `SERIAL` with `INTEGER PRIMARY KEY` and use sequences
-- `COPY` syntax may need adjustment
-- Date functions are compatible
-
-## Dataset Requirements
-
-Download the Olist Brazilian E-Commerce dataset from Kaggle:
-- `olist_orders_dataset.csv`
-- `olist_customers_dataset.csv`
-- `olist_order_items_dataset.csv`
-- `olist_products_dataset.csv`
-- `olist_sellers_dataset.csv`
-- `olist_order_payments_dataset.csv`
-- `olist_order_reviews_dataset.csv`
-- `olist_geolocation_dataset.csv`
-
-## Key Features
-
-### Bronze Layer
-- Exact CSV structure preservation
-- No data loss
-- Fast bulk loading
-
-### Silver Layer
-- Data quality improvements
-- Standardized formats
-- Duplicate removal
-- Type conversions
-
-### Gold Layer
-- Star schema design
-- SCD Type 2 for customer dimension
-- Comprehensive date dimension
-- Calculated metrics (delivery delays, processing times)
-- Foreign key relationships
-
-### Testing
-- Row count validation (Bronze → Silver → Gold)
-- NULL value checks in key columns
-- Foreign key integrity validation
-- Cross-layer consistency checks
-
-## Example Queries
-
-### Sales by Product Category
-```sql
-SELECT 
-    dp.product_category_name,
-    COUNT(DISTINCT foi.order_id) AS order_count,
-    SUM(foi.price) AS total_revenue,
-    SUM(foi.freight_value) AS total_freight,
-    AVG(foi.price) AS avg_price
-FROM gold.fact_order_items foi
-JOIN gold.dim_product dp ON foi.product_sk = dp.product_sk
-GROUP BY dp.product_category_name
-ORDER BY total_revenue DESC;
-```
-
-### Customer Order Analysis
-```sql
-SELECT 
-    dd.year_number,
-    dd.quarter_name,
-    COUNT(DISTINCT fo.order_id) AS total_orders,
-    COUNT(DISTINCT fo.customer_sk) AS unique_customers,
-    AVG(fo.total_processing_time_hours) AS avg_delivery_hours,
-    AVG(fo.delivery_delay_days) AS avg_delay_days
-FROM gold.fact_orders fo
-JOIN gold.dim_date dd ON fo.purchase_date_sk = dd.date_sk
-WHERE fo.order_status = 'delivered'
-GROUP BY dd.year_number, dd.quarter_name
-ORDER BY dd.year_number, dd.quarter_number;
-```
-
-### Review Score Distribution
-```sql
-SELECT 
-    fr.review_score,
-    COUNT(*) AS review_count,
-    COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () AS percentage
-FROM gold.fact_reviews fr
-GROUP BY fr.review_score
-ORDER BY fr.review_score DESC;
-```
-
-## Notes
-
-- All timestamps are converted to proper TIMESTAMP types
-- Empty strings are replaced with NULL values
-- Text fields are standardized (lowercase cities, uppercase states)
-- Date dimension covers 2016-2020 (full 5-year period)
-- Customer dimension uses SCD Type 2 for historical tracking
-- All fact tables include surrogate keys and foreign key relationships
+Production-grade data platform implementing a **Medallion Architecture** (Bronze/Silver/Gold) on the Olist Brazilian E-Commerce dataset. This project integrates a traditional SQL warehouse with a modern data stack, featuring an end-to-end ELT pipeline, LLM-powered analytics (**QueryMind**), and interactive dashboards.
 
 ---
 
-# Modern Data Platform Extension
+## 🏗️ Architecture
 
-This project has been extended with a production-grade data platform architecture.
+The platform follows a modern data stack approach, processing data from raw CSVs to actionable insights.
 
-## Architecture Diagram
+![Architecture Diagram](architecture.png)
 
 ```mermaid
 graph LR
-    CSV[CSV Source] -->|Producer| Kafka[Kafka]
-    Kafka -->|Consumer| MinIO[MinIO Data Lake]
-    MinIO -->|Loader| Postgres[Postgres Warehouse]
-    Postgres -->|dbt| Silver[dbt Silver]
-    Silver -->|dbt| Gold[dbt Gold]
+    subgraph Sources
+        CSV[CSV Files]
+    end
+
+    subgraph Ingestion["Ingestion Layer"]
+        Kafka[Apache Kafka]
+        MinIO[MinIO Data Lake]
+    end
+
+    subgraph Warehouse["Data Warehouse (Postgres)"]
+        Bronze[(Bronze Layer)]
+        Silver[(Silver Layer)]
+        Gold[(Gold Layer)]
+    end
+
+    subgraph Analytics["Analytics & AI"]
+        dbt[dbt Core]
+        QueryMind[QueryMind AI]
+        Streamlit[Dashboards]
+    end
+
+    CSV -->|Producer| Kafka
+    Kafka -->|Consumer| MinIO
+    MinIO -->|Loader| Bronze
+    Bronze -->|dbt| Silver
+    Silver -->|dbt| Gold
+    Gold -->|Reads| QueryMind
+    Gold -->|Reads| Streamlit
 ```
 
-## Extended Tech Stack
-- **Kafka**: Ingestion buffer for simulated real-time/batch data.
-- **MinIO**: Object storage (S3 compatible) for Raw/Staging layer.
-- **Airflow**: Orchestrator for the end-to-end pipeline.
-- **dbt**: Transformation engine for Silver/Gold layers.
+### Data Layers
+1. **Bronze (Raw)**: Direct ingest from CSVs. Exact copies of source structure.
+2. **Silver (Cleaned)**: Deduplicated, standardized, properly cast types.
+   - *Transformations*: Trimming, Lowercase/Uppercase standardization, Timestamp conversion, NULL handling.
+3. **Gold (Dimensional)**: Star Schema for analytics.
+   - *Facts*: `fact_orders`, `fact_order_items`, `fact_payments`, `fact_reviews`
+   - *Dimensions*: `dim_customer` (SCD Type 2), `dim_product`, `dim_seller`, `dim_date`
 
-## Why dbt?
-dbt is introduced *after* the initial load (Bronze) to manage the complex transformations (Silver/Gold) because:
-1. **Testing**: Automated tests (`unique`, `not_null`) ensure data quality in the Gold layer.
-2. **Lineage**: Auto-generated documentation and dependency graphs.
-3. **Modularity**: Reusable models for Dimensions and Facts.
-
-## Execution Steps
-
-1. **Start Infrastructure**:
-   ```bash
-   docker-compose up -d
-   ```
-
-2. **Trigger Pipeline (via Airflow)**:
-   - Access Airflow at `http://localhost:8080` (admin/admin).
-   - Trigger `olist_etl_pipeline`.
-
-3. **Pipeline Stages**:
-   - **Ingestion**: Reads CSVs from `datasets/` -> Kafka -> MinIO `raw/`.
-   - **Loading**: Loads JSON from MinIO -> Postgres `bronze` tables (executes DDL first).
-   - **Transformation**: Runs `dbt run` to populate `silver` and `gold` tables.
-   - **Testing**: Runs `dbt test` to verify Gold models.
+### Data Model (Gold Layer)
+```mermaid
+erDiagram
+    FACT_ORDERS ||--o{ DIM_CUSTOMER : has
+    FACT_ORDERS ||--o{ DIM_DATE : "purchased on"
+    FACT_ORDERS ||--|{ FACT_ORDER_ITEMS : contains
+    FACT_ORDER_ITEMS }|--|| DIM_PRODUCT : "is a"
+    FACT_ORDER_ITEMS }|--|| DIM_SELLER : "sold by"
+    FACT_REVIEWS }|--|| FACT_ORDERS : "reviews"
+```
 
 ---
 
-# 🧠 QueryMind: LLM Analytics Layer
+## 🛠️ Technology Stack
 
-An AI-powered natural language interface for querying the data warehouse.
+- **Ingestion**: Apache Kafka, MinIO (S3-compatible object storage)
+- **Orchestration**: Apache Airflow
+- **Warehousing**: PostgreSQL
+- **Transformation**: dbt Core (Data Build Tool)
+- **Application**: Streamlit (Dashboards & AI Interface)
+- **AI/LLM**: OpenAI GPT-4 (via QueryMind)
 
-## Architecture
+---
 
-User Question (Natural Language)
-   ↓
-Streamlit Interface (`app/streamlit_app.py`)
-   ↓
-Schema Loader (`llm/schema_loader.py`) ← Reads dbt artifacts (`dbt/target/manifest.json`)
-   ↓
-Prompt Engine (`llm/prompt_templates.py`) ← Injects Gold Schema Context
-   ↓
-SQL Generator (`llm/sql_generator.py`) ← OpenAI GPT-3.5/4
-   ↓
-SQL Validator (`llm/sql_validator.py`) ← Enforces READ-ONLY & Gold Schema
-   ↓
-Executor (`llm/executor.py`) → Postgres Database (Gold Layer)
-   ↓
-Explainer (`llm/explainer.py`) → Natural Language Summary
-   ↓
-User Result
+## 🚀 Quick Start
 
-## Features
+### Prerequisites
+- Docker & Docker Compose
+- Python 3.10+
+- OpenAI API Key (for QueryMind)
+
+### 1. Start Infrastructure
+Launch the containerized environment (Postgres, Kafka, MinIO, Airflow):
+```bash
+docker-compose up -d
+```
+
+### 2. Configure Environment
+Create a `.env` file in the root directory:
+```env
+OPENAI_API_KEY=sk-...
+POSTGRES_HOST=localhost
+POSTGRES_USER=warehouse_user
+POSTGRES_PASSWORD=warehouse_pass
+POSTGRES_DB=warehouse_db
+```
+
+### 3. Initialize & Load Data
+You can run the end-to-end pipeline via Airflow or execute individual steps.
+
+**Option A: Airflow (Recommended)**
+1. Access Airflow at `http://localhost:8080` (Credentials: `admin`/`admin`).
+2. Trigger the `olist_etl_pipeline` DAG.
+
+![Airflow DAG - Pipeline View](https://via.placeholder.com/800x300?text=Insert+Airflow+DAG+Screenshot+Here)
+
+**Option B: Manual Execution**
+1. Load Bronze Layer (Raw):
+   ```bash
+   psql -h localhost -U warehouse_user -d warehouse_db -f scripts/bronze/00_run_all_bronze.sql
+   ```
+   *(Note: individual scripts are in `scripts/bronze/`)*
+
+2. Build Silver & Gold Layers (dbt):
+   ```bash
+   cd dbt
+   dbt run
+   ```
+
+---
+
+## 📂 Project Structure
+
+```
+.
+├── app/                # Streamlit Application (AI Interface)
+├── dashboards/         # Analytical Dashboards (Streamlit)
+├── data_utils/         # Data Generation & Validation Utilities
+├── datasets/           # Raw CSV Files (Olist Dataset)
+├── dbt/                # dbt Project (Transformations & Tests)
+├── kafka/              # Kafka Producers & Consumers
+├── llm/                # QueryMind AI Core Logic
+├── scripts/            # SQL & Shell Scripts
+│   ├── bronze/         # DDL & Copy commands for Raw Data
+│   ├── silver/         # (Legacy) SQL Scripts for Silver
+│   └── gold/           # (Legacy) SQL Scripts for Gold
+└── tests/              # Additional SQL Tests
+```
+
+---
+
+## 🧠 QueryMind: AI Analytics
+
+QueryMind allows natural language querying of the Gold schema. It ensures safety by being **Read-Only** and context-aware.
+
+**How to Run**:
+```bash
+streamlit run app/streamlit_app.py
+```
+
+![QueryMind UI - Chat Interface](https://via.placeholder.com/800x400?text=Insert+QueryMind+Screenshot+Here)
+
+**Features**:
 - **Zero-Config Schema Awareness**: Automatically builds prompts from dbt metadata.
-- **Strictly Read-Only**: Validator blocks `INSERT`, `UPDATE`, `DROP`, etc.
+- **Strictly Read-Only**: Validator blocks harmful commands.
 - **Gold-Layer Only**: Restricts queries to the analytical schema.
-- **Explainable AI**: Returns the raw SQL alongside the result and an explanation.
-
-## Setup & Usage
-
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Configure Environment**:
-   Ensure your `.env` file or environment variables contain:
-   ```env
-   OPENAI_API_KEY=sk-...
-   POSTGRES_HOST=localhost
-   POSTGRES_USER=warehouse_user
-   POSTGRES_PASSWORD=warehouse_pass
-   ```
-
-3. **Run the App**:
-   ```bash
-   streamlit run app/streamlit_app.py
-   ```
-
-4. **Example Questions**:
-   - "What is the total revenue by month?"
-   - "List the top 5 states by number of orders."
-   - "What is the average delivery time per seller?"
-
 
 ---
 
-#  Dashboard Layer (Streamlit)
+## 📊 Analytics Dashboards
 
-A modular, production-grade dashboard system has been added to visualize insights from the Gold layer.
+Interactive visualization of key metrics built with Streamlit.
 
-## Features
-
-1.  **Executive Overview**: High-level KPIs (Revenue, Orders, AOV, Active Customers) and trends.
-2.  **Sales & Order Analysis**: Daily sales trends, top products, and detailed order lists with filtering.
-3.  **Customer Analytics**: Segmentation (VIP vs. One-time), retention metrics, and geographic distribution.
-4.  **Delivery & Operations**: Analysis of delivery times, delays, and seller performance.
-5.  **QueryMind AI**: The LLM-powered natural language analyst is now integrated as a dashboard page.
-
-## Running the Dashboard
-
-To launch the full dashboard suite:
-
-\\\ash
+**How to Run**:
+```bash
 streamlit run dashboards/app.py
-\\\
+```
 
-## Structure
+![Dashboard Executive Overview](https://via.placeholder.com/800x400?text=Insert+Dashboard+Screenshot+Here)
 
-- \dashboards/app.py\: Main entry point and navigation.
-- \dashboards/pages/\: Individual dashboard modules.
-- \dashboards/components/\: Reusable UI components (KPI cards, charts, filters).
-- \db/connection.py\: Centralized, cached database connection logic using SQLAlchemy.
+**Key Modules**:
+- **Executive Overview**: High-level KPIs.
+- **Micro-Segmentation**: Customer analysis.
+- **Operations**: Delivery & Logistics performance.
 
+---
+
+## 👩‍💻 Development
+
+### dbt Workflow
+To modify transformations or add new models:
+1. Edit models in `dbt/models/`.
+2. Run tests to ensure integrity:
+   ```bash
+   dbt test
+   ```
+3. Generate documentation:
+   ```bash
+   dbt docs generate
+   dbt docs serve
+   ```
+
+### Python/App Development
+- **Streamlit**: App code is in `app/` and `dashboards/`.
+- **LLM Logic**: Logic resides in `llm/` (Prompt Engineering, SQL Generation).
+
+---
+
+## 🧪 Testing
+
+The project includes multiple testing layers:
+1. **dbt Tests**: Schema tests (unique, not_null) and custom data tests.
+2. **SQL Tests**: Legacy tests in `tests/*.sql` for row counts and FK integrity.
+3. **Unit Tests**: Python tests for the LLM components.
