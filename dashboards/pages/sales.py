@@ -20,7 +20,7 @@ def show():
     try:
         ref_df = pd.read_sql(filter_query, engine)
         selected_states = state_filter(ref_df)
-    except:
+    except Exception:
         selected_states = []
 
     state_clause = ""

@@ -23,7 +23,7 @@ def get_db_engine() -> Engine:
     try:
         engine = create_engine(connection_string)
         # Test connection
-        with engine.connect() as conn:
+        with engine.connect():
             pass
         return engine
     except Exception as e:

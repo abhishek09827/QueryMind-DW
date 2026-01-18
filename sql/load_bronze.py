@@ -4,7 +4,6 @@ import json
 import io
 import csv
 import psycopg2
-from psycopg2 import sql
 
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

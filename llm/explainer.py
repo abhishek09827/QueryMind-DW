@@ -10,7 +10,7 @@ class ResultExplainer:
         row_count = len(df)
         columns = ", ".join(df.columns.tolist())
         
-        explanation = f"Query executed successfully.\n"
+        explanation = "Query executed successfully.\n"
         explanation += f"Question: '{question}'\n"
         explanation += f"Result contains {row_count} rows with columns: {columns}.\n"
         

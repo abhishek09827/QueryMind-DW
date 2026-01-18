@@ -1,7 +1,6 @@
 import streamlit as st
 import sys
 import os
-import pandas as pd
 from dotenv import load_dotenv
 
 # Add project root to path
