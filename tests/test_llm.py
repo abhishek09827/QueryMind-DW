@@ -16,14 +16,16 @@ def test_sql_validator_with_clause():
 
 def test_sql_validator_invalid_drop():
     validator = SQLValidator()
-    invalid_query = "DROP TABLE gold.orders"
+    # Posing as a valid query that tries to inject a DROP
+    invalid_query = "SELECT * FROM gold.orders; DROP TABLE gold.orders"
     is_valid, msg = validator.validate(invalid_query)
     assert is_valid is False
     assert "Forbidden keyword" in msg
 
 def test_sql_validator_invalid_update():
     validator = SQLValidator()
-    invalid_query = "UPDATE gold.orders SET status = 'shipped'"
+    # Posing as a valid query that tries to inject an UPDATE
+    invalid_query = "SELECT * FROM gold.orders; UPDATE gold.orders SET status = 'shipped'"
     is_valid, msg = validator.validate(invalid_query)
     assert is_valid is False
     assert "Forbidden keyword" in msg
