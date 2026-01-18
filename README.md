@@ -3,6 +3,7 @@
 [![Olist E-Commerce](https://img.shields.io/badge/Dataset-Olist%20E--Commerce-blue.svg)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 [![Architecture](https://img.shields.io/badge/Architecture-Medallion-orange.svg)](https://www.databricks.com/glossary/medallion)
 [![Stack](https://img.shields.io/badge/Stack-Postgres%20%7C%20dbt%20%7C%20Airflow%20%7C%20Kafka%20%7C%20MinIO-green.svg)]()
+[![CI Status](https://github.com/username/repo/actions/workflows/ci.yml/badge.svg)](https://github.com/username/repo/actions)
 
 Production-grade data platform implementing a **Medallion Architecture** (Bronze/Silver/Gold) on the Olist Brazilian E-Commerce dataset. This project integrates a traditional SQL warehouse with a modern data stack, featuring an end-to-end ELT pipeline, LLM-powered analytics (**QueryMind**), and interactive dashboards.
 
@@ -129,6 +130,7 @@ You can run the end-to-end pipeline via Airflow or execute individual steps.
 
 ```
 .
+├── .github/            # CI/CD Workflows
 ├── app/                # Streamlit Application (AI Interface)
 ├── dashboards/         # Analytical Dashboards (Streamlit)
 ├── data_utils/         # Data Generation & Validation Utilities
@@ -140,7 +142,7 @@ You can run the end-to-end pipeline via Airflow or execute individual steps.
 │   ├── bronze/         # DDL & Copy commands for Raw Data
 │   ├── silver/         # (Legacy) SQL Scripts for Silver
 │   └── gold/           # (Legacy) SQL Scripts for Gold
-└── tests/              # Additional SQL Tests
+└── tests/              # Unit & SQL Tests
 ```
 
 ---
@@ -181,6 +183,29 @@ streamlit run dashboards/app.py
 
 ---
 
+## 🔄 CI/CD & Testing
+
+### Continuous Integration
+We use GitHub Actions to ensure code quality and stability. The CI pipeline (`.github/workflows/ci.yml`):
+- **Triggers**: On push to `main` and all Pull Requests.
+- **Checks**:
+  - **Linting**: Uses `ruff` to enforce PEP 8 style and catch common errors.
+  - **Testing**: Runs `pytest` for Python unit tests.
+
+### Tests
+The project includes multiple testing layers:
+1. **Unit Tests**: Python tests in `tests/` for the LLM components (Validator, Prompt Builder).
+   ```bash
+   pytest tests/test_llm.py
+   ```
+2. **dbt Tests**: Data integrity tests (unique, not_null) run via `dbt test`.
+3. **Linting**: Run `ruff check .` to verify code style.
+
+### Deployment
+Deployment to Streamlit Cloud is currently manual (or triggered via `workflow_dispatch` in GitHub Actions). 
+
+---
+
 ## 👩‍💻 Development
 
 ### dbt Workflow
@@ -200,11 +225,3 @@ To modify transformations or add new models:
 - **Streamlit**: App code is in `app/` and `dashboards/`.
 - **LLM Logic**: Logic resides in `llm/` (Prompt Engineering, SQL Generation).
 
----
-
-## 🧪 Testing
-
-The project includes multiple testing layers:
-1. **dbt Tests**: Schema tests (unique, not_null) and custom data tests.
-2. **SQL Tests**: Legacy tests in `tests/*.sql` for row counts and FK integrity.
-3. **Unit Tests**: Python tests for the LLM components.

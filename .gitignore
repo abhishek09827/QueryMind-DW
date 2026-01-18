@@ -2,3 +2,7 @@ datasets/
 .vscode/
 psql.session.sql
 logs/
+CAREER_GROWTH_PLAN.md
+CICD prompt.txt
+STUDY_GUIDE.md
+.env
