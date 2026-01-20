@@ -15,6 +15,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Load Custom CSS
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+css_path = os.path.join(os.path.dirname(__file__), 'assets/style.css')
+local_css(css_path)
+
 # Sidebar Navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
