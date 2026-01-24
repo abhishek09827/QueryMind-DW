@@ -42,7 +42,12 @@ SELECT DISTINCT
     CASE 
         WHEN TRIM(geolocation_state) = '' THEN NULL 
         ELSE UPPER(TRIM(geolocation_state)) 
-    END AS geolocation_state
+    END AS geolocation_state,
+    'olist'::TEXT              AS source_system,
+    CURRENT_DATE               AS ingestion_date,
+    CURRENT_TIMESTAMP          AS created_at,
+    CURRENT_TIMESTAMP          AS updated_at,
+    TRUE                        AS is_active
     
 FROM bronze.geolocation
 WHERE geolocation_zip_code_prefix IS NOT NULL

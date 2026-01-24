@@ -17,12 +17,7 @@ SELECT
     review_comment_title,
     review_comment_message,
     review_creation_date,
-    review_answer_timestamp,
-    'olist'::TEXT              AS source_system,
-    CURRENT_DATE               AS ingestion_date,
-    CURRENT_TIMESTAMP          AS created_at,
-    CURRENT_TIMESTAMP          AS updated_at,
-    TRUE                        AS is_active
+    review_answer_timestamp
 FROM (
     SELECT
         TRIM(review_id) AS review_id,

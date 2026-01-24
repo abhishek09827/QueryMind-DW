@@ -30,7 +30,13 @@ SELECT DISTINCT
     CASE 
         WHEN TRIM(customer_state) = '' THEN NULL 
         ELSE UPPER(TRIM(customer_state)) 
-    END AS customer_state
+    END AS customer_state,
+
+    'olist'::TEXT              AS source_system,
+    CURRENT_DATE               AS ingestion_date,
+    CURRENT_TIMESTAMP          AS created_at,
+    CURRENT_TIMESTAMP          AS updated_at,
+    TRUE                        AS is_active
     
 FROM bronze.customers
 WHERE customer_id IS NOT NULL

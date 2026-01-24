@@ -10,7 +10,7 @@
 DROP TABLE IF EXISTS silver.sellers CASCADE;
 
 -- Create cleaned sellers table
-CREATE TABLE silver.sellers AS
+CREATE TABLE silver.sellers AS  
 SELECT DISTINCT
     -- Primary key
     TRIM(seller_id) AS seller_id,
@@ -29,7 +29,12 @@ SELECT DISTINCT
     CASE 
         WHEN TRIM(seller_state) = '' THEN NULL 
         ELSE UPPER(TRIM(seller_state)) 
-    END AS seller_state
+    END AS seller_state,
+    'olist'::TEXT              AS source_system,
+    CURRENT_DATE               AS ingestion_date,
+    CURRENT_TIMESTAMP          AS created_at,
+    CURRENT_TIMESTAMP          AS updated_at,
+    TRUE                        AS is_active
     
 FROM bronze.sellers
 WHERE seller_id IS NOT NULL

@@ -45,7 +45,12 @@ SELECT DISTINCT
     CASE 
         WHEN product_width_cm IS NULL OR product_width_cm < 0 THEN 0 
         ELSE product_width_cm 
-    END AS product_width_cm
+    END AS product_width_cm,
+    'olist'::TEXT              AS source_system,
+    CURRENT_DATE               AS ingestion_date,
+    CURRENT_TIMESTAMP          AS created_at,
+    CURRENT_TIMESTAMP          AS updated_at,
+    TRUE                        AS is_active
     
 FROM bronze.products
 WHERE product_id IS NOT NULL

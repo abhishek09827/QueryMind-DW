@@ -49,9 +49,9 @@ SELECT DISTINCT
     c.customer_zip_code_prefix,
     c.customer_city,
     c.customer_state,
-    CURRENT_DATE AS start_date,
-    NULL AS end_date,
-    TRUE AS is_current
+    CURRENT_DATE::DATE               AS start_date,
+    NULL::DATE                       AS end_date,
+    TRUE::BOOLEAN                    AS is_current
 FROM silver.customers c
 WHERE c.customer_id IS NOT NULL
   AND c.customer_unique_id IS NOT NULL;

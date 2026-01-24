@@ -51,7 +51,12 @@ SELECT DISTINCT
     CASE 
         WHEN TRIM(order_estimated_delivery_date::TEXT) = '' THEN NULL 
         ELSE order_estimated_delivery_date 
-    END AS order_estimated_delivery_date
+    END AS order_estimated_delivery_date,
+    'olist'::TEXT              AS source_system,
+    CURRENT_DATE               AS ingestion_date,
+    CURRENT_TIMESTAMP          AS created_at,
+    CURRENT_TIMESTAMP          AS updated_at,
+    TRUE                        AS is_active
     
 FROM bronze.orders
 WHERE order_id IS NOT NULL

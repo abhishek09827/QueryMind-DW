@@ -6,3 +6,7 @@ CAREER_GROWTH_PLAN.md
 CICD prompt.txt
 STUDY_GUIDE.md
 .env
+CODE_WALKTHROUGH.md
+.db/__pycache__/
+.llm/__pycache__/
+.streamlit/

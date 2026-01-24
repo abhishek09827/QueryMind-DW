@@ -41,7 +41,12 @@ SELECT DISTINCT
     CASE 
         WHEN freight_value IS NULL OR freight_value < 0 THEN 0 
         ELSE ROUND(CAST(freight_value AS DECIMAL(10, 2)), 2) 
-    END AS freight_value
+    END AS freight_value,
+    'olist'::TEXT              AS source_system,
+    CURRENT_DATE               AS ingestion_date,
+    CURRENT_TIMESTAMP          AS created_at,
+    CURRENT_TIMESTAMP          AS updated_at,
+    TRUE                        AS is_active
     
 FROM bronze.order_items oi
 WHERE order_id IS NOT NULL

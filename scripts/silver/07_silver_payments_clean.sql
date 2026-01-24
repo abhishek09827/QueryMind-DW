@@ -34,7 +34,12 @@ SELECT DISTINCT
     CASE 
         WHEN payment_value IS NULL OR payment_value < 0 THEN 0 
         ELSE ROUND(CAST(payment_value AS DECIMAL(10, 2)), 2) 
-    END AS payment_value
+    END AS payment_value,
+    'olist'::TEXT              AS source_system,
+    CURRENT_DATE               AS ingestion_date,
+    CURRENT_TIMESTAMP          AS created_at,
+    CURRENT_TIMESTAMP          AS updated_at,
+    TRUE                        AS is_active
     
 FROM bronze.order_payments
 WHERE order_id IS NOT NULL
