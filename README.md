@@ -156,7 +156,8 @@ QueryMind allows natural language querying of the Gold schema. It ensures safety
 streamlit run app/streamlit_app.py
 ```
 
-![QueryMind UI - Chat Interface](https://via.placeholder.com/800x400?text=Insert+QueryMind+Screenshot+Here)
+![QueryMind UI - Chat Interface]<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/6029351d-65a4-40f3-9f2f-3691c266c697" />
+
 
 **Features**:
 - **Zero-Config Schema Awareness**: Automatically builds prompts from dbt metadata.
