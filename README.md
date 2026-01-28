@@ -156,8 +156,7 @@ QueryMind allows natural language querying of the Gold schema. It ensures safety
 streamlit run app/streamlit_app.py
 ```
 
-![QueryMind UI - Chat Interface]<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/6029351d-65a4-40f3-9f2f-3691c266c697" />
-
+![QueryMind UI - Chat Interface]
 
 **Features**:
 - **Zero-Config Schema Awareness**: Automatically builds prompts from dbt metadata.
@@ -175,7 +174,8 @@ Interactive visualization of key metrics built with Streamlit.
 streamlit run dashboards/app.py
 ```
 
-![Dashboard Executive Overview](https://via.placeholder.com/800x400?text=Insert+Dashboard+Screenshot+Here)
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/6029351d-65a4-40f3-9f2f-3691c266c697" />
+
 
 **Key Modules**:
 - **Executive Overview**: High-level KPIs.
