@@ -3,7 +3,7 @@
 [![Olist E-Commerce](https://img.shields.io/badge/Dataset-Olist%20E--Commerce-blue.svg)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 [![Architecture](https://img.shields.io/badge/Architecture-Medallion-orange.svg)](https://www.databricks.com/glossary/medallion)
 [![Stack](https://img.shields.io/badge/Stack-Postgres%20%7C%20dbt%20%7C%20Airflow%20%7C%20Kafka%20%7C%20MinIO-green.svg)]()
-[![CI Status](https://github.com/username/repo/actions/workflows/ci.yml/badge.svg)](https://github.com/username/repo/actions)
+[![CI Status](https://github.com/username/repo/actions/workflows/ci.yml/badge.svg)](https://github.com/abhishek09827/repo/actions)
 
 Production-grade data platform implementing a **Medallion Architecture** (Bronze/Silver/Gold) on the Olist Brazilian E-Commerce dataset. This project integrates a traditional SQL warehouse with a modern data stack, featuring an end-to-end ELT pipeline, LLM-powered analytics (**QueryMind**), and interactive dashboards.
 
