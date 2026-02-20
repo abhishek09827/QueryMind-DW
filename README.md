@@ -13,7 +13,7 @@ Production-grade data platform implementing a **Medallion Architecture** (Bronze
 
 The platform follows a modern data stack approach, processing data from raw CSVs to actionable insights.
 
-![Architecture Diagram](architecture.png)
+![Architecture Diagram](architecture.png) 
 
 ```mermaid
 graph LR
