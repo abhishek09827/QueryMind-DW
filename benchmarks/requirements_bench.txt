@@ -1,0 +1,11 @@
+duckdb
+dbt-core
+faker
+tabulate
+sqlglot
+redis
+psutil
+sqlparse
+pandas
+numpy
+

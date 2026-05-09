@@ -165,6 +165,38 @@ streamlit run app/streamlit_app.py
 
 ---
 
+## Benchmark Suite
+
+QueryMind-DW now includes a reproducible benchmark suite for the AI SQL layer.
+
+### What it measures
+- **NL-to-SQL accuracy** across 60 hand-written questions spanning four tiers
+- **Redis-style cache effectiveness** with repeat-query workloads
+- **SQL safety coverage** against destructive statements
+- **dbt / DuckDB runtime** for staging, dimension, fact, and mart builds
+
+### Files
+- `benchmarks/benchmark_querymind.py`
+- `benchmarks/nl_sql_benchmark_set.py`
+- `benchmarks/requirements_bench.txt`
+- `benchmarks/results/`
+
+### How to run
+```bash
+python -m pip install -r benchmarks/requirements_bench.txt
+python -m benchmarks.benchmark_querymind --mode mock
+```
+
+### Live LLM mode
+To run the live benchmark with OpenRouter, set `OPENROUTER_KEY` in your environment and use:
+```bash
+python -m benchmarks.benchmark_querymind --mode live
+```
+
+The benchmark writes its report to `benchmarks/results/benchmark_report.md` and stores a machine-readable JSON summary alongside it.
+
+---
+
 ## 📊 Analytics Dashboards
 
 Interactive visualization of key metrics built with Streamlit.
