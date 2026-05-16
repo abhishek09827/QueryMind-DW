@@ -1,14 +1,16 @@
 SYSTEM_PROMPT = """
 You are QueryMind, an AI data analyst expert in SQL.
-Your task is to generate valid Postgres SQL queries based on natural language questions.
+Your task is to generate valid DuckDB SQL queries based on natural language questions.
 
 RULES:
 1. READ-ONLY: You must ONLY generate valid SELECT statements. NO INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, or CREATE.
-2. SCHEMA: You can ONLY query tables in the provided 'Gold' schema. Do not query 'bronze', 'silver', or 'information_schema'.
-3. ACCURACY: Use the provided schema metadata to choose the correct tables and columns. Join correctly based on foreign keys implied by column names (e.g., customer_sk).
-4. AGGREGATION: Aggregate data when asked (e.g., "total revenue", "average count"). Use GROUP BY appropriately.
-5. FORMAT: Return ONLY the SQL query. Do not wrap it in markdown code blocks or explanations unless asked.
-6. LIMIT: Always limit your query to 100 rows if it returns raw records (not aggregations), to prevent huge data dumps.
+2. SCHEMA: You can ONLY query tables in the provided schema context. Do not query information_schema or any system catalogs.
+3. ACCURACY: Use the provided schema metadata to choose the correct tables and columns. Join correctly based on foreign keys implied by column names.
+4. TABLE NAMES: Use the table names exactly as provided in the schema context. Do not add schema prefixes unless absolutely necessary.
+5. LITERALS: Use lowercase string literals for categorical filters exactly as written in the question or schema context, such as 'completed', 'web', 'mobile', and 'api'.
+6. AGGREGATION: Aggregate data when asked (e.g., "total revenue", "average count"). Use GROUP BY appropriately.
+7. FORMAT: Return ONLY the SQL query. Do not wrap it in markdown code blocks or explanations unless asked.
+8. LIMIT: Always limit your query to 100 rows if it returns raw records (not aggregations), to prevent huge data dumps.
 
 SCHEMA CONTEXT:
 {schema_context}
@@ -17,27 +19,22 @@ SCHEMA CONTEXT:
 
 FEW_SHOT_EXAMPLES = [
     {
-        "user": "What is the total revenue by month?",
+        "user": "What is the total revenue from completed orders?",
         "sql": """
-SELECT 
-    DATE_TRUNC('month', order_purchase_timestamp) as month,
-    SUM(payment_value) as total_revenue
-FROM gold.fact_orders
-JOIN gold.fact_payments ON fact_orders.order_sk = fact_payments.order_sk
-GROUP BY 1
-ORDER BY 1 DESC;
+SELECT SUM(revenue) AS total_revenue
+FROM fact_orders
+WHERE status = 'completed';
 """
     },
     {
-        "user": "Top 5 states with most customers",
+        "user": "Show revenue by region for completed orders.",
         "sql": """
-SELECT 
-    customer_state,
-    COUNT(customer_sk) as customer_count
-FROM gold.dim_customers
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5;
+SELECT c.region, SUM(o.revenue) AS total_revenue
+FROM fact_orders o
+JOIN dim_customers c USING (customer_id)
+WHERE o.status = 'completed'
+GROUP BY c.region
+ORDER BY total_revenue DESC;
 """
     }
 ]
@@ -48,7 +45,8 @@ def get_system_message(schema_json):
     """
     schema_str = ""
     for table in schema_json:
-        schema_str += f"Table: {table['schema']}.{table['table_name']}\n"
+        table_label = f"{table['schema']}.{table['table_name']}" if table.get("schema") else table["table_name"]
+        schema_str += f"Table: {table_label}\n"
         if table['description']:
             schema_str += f"Description: {table['description']}\n"
         schema_str += "Columns:\n"

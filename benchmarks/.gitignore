@@ -1,0 +1,4 @@
+benchmark_dw.duckdb
+_bench_deps/
+results/*
+!results/.gitkeep
