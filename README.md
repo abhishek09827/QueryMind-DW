@@ -9,6 +9,7 @@ Production-grade data platform implementing a **Medallion Architecture** (Bronze
 
 ---
 
+
 ## 🏗️ Architecture
 
 The platform follows a modern data stack approach, processing data from raw CSVs to actionable insights.
